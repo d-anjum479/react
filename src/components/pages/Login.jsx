@@ -4,8 +4,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Layout from "../layout/Layout";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authValue } from "../../store/authSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [value, setValue] = useState({});
   usePageTitle("Login");
@@ -19,6 +22,13 @@ const Login = () => {
         console.log(response.data);
         if (response.data.success) {
           toast.success(response.data.message, { autoClose: 1000 });
+          dispatch(
+            authValue({
+              user: response.data.user,
+              token: response.data.token,
+            })
+          );
+          window.localStorage.setItem("auth", JSON.stringify(response.data));
           setTimeout(() => {
             navigate("/");
           }, 1000);

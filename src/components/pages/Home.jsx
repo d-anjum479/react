@@ -1,27 +1,29 @@
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import Layout from "../layout/Layout";
 import usePageTitle from "../utils/usePageTitle";
-import axios from "axios";
+import { useEffect, useState } from "react";
 const Home = () => {
   usePageTitle("Home");
-  const [products, setProducts] = useState([]);
+  const [auth, setAuth] = useState(useSelector((state) => state.auth));
 
+  // displaying data on first render
   useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await axios
-        .get("https://fakestoreapi.com/products")
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    fetchProducts();
-  }, []);
+    const data = window.localStorage.getItem("auth");
+    if (data) {
+      const parseData = JSON.parse(data);
+      setAuth({
+        user: parseData.user,
+        token: parseData.token,
+      });
+    }
+  }, [auth]);
+
   return (
     <>
-      <Layout></Layout>
+      <Layout>
+        <h1>Home</h1>
+        <pre>{JSON.stringify(auth, null, 4)}</pre>
+      </Layout>
     </>
   );
 };
